@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Stretching Routine Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    header {
+      background-color: #6c63ff;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+    main {
+      padding: 2rem;
+    }
+    form {
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    select, input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .stretch-guide {
+      display: none;
+      margin-top: 1.5rem;
+    }
+    .stretch-guide img {
+      max-width: 100%;
+      margin-top: 0.5rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background-color: #6c63ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #554db8;
+    }
+    #reminder {
+      margin-top: 2rem;
+      font-weight: bold;
+    }
+    .hidden {
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Personalized Stretching Routine Builder</h1>
+  </header>
+  <main>
+    <form id="quizForm">
+      <h2>Interactive Quiz</h2>
+      <label for="discomfort">Where do you feel discomfort?</label>
+      <select id="discomfort">
+        <option value="back">Back Pain</option>
+        <option value="neck">Neck Stiffness</option>
+        <option value="sedentary">Sedentary Lifestyle</option>
+      </select>
+      <button type="button" id="startRoutine">Build Routine</button>
+    </form>
+
+    <div id="stretchingRoutine" class="stretch-guide">
+      <h2>Your Stretching Routine</h2>
+      <div id="stretchDetails"></div>
+      <button id="startTimer">Start Timer</button>
+      <p id="timer" class="hidden">Time remaining: <span id="countdown">30</span> seconds</p>
+    </div>
+
+    <div id="reminder" class="hidden">
+      Reminder: Don't forget to stretch daily!
+    </div>
+  </main>
+  <script>
+    const stretches = {
+      back: [
+        {
+          name: "Child's Pose",
+          image: "man-doing-child-s-pose-stretch-exercise-flat-illustration-isolated-on-white-background-free-vector.jpg"
+        },
+        {
+          name: "Cat-Cow Stretch",
+          image: "65743e8d2f80a56a06fcfefc_cat-cow.png"
+        },
+      ],
+      neck: [
+        {
+          name: "Neck Tilts",
+          image: "images (1).jpg"
+        },
+        {
+          name: "Side Neck Stretch",
+          image: "stock-vector-neck-stretches-instructions-for-correct-head-and-shoulder-posture-outline-diagram-labeled-2301444907.jpg"
+        },
+      ],
+      sedentary: [
+        {
+          name: "Standing Forward Bend",
+          image: "standing-half-forward-bend.jpg"
+        },
+        {
+          name: "Seated Twist",
+          image: "images.jpg" // Replace this with the correct image filename
+        },
+      ],
+    };
+
+    let countdownInterval = null; // Global variable to manage the timer
+
+    document.getElementById("startRoutine").addEventListener("click", () => {
+      const discomfort = document.getElementById("discomfort").value;
+      const routineDiv = document.getElementById("stretchingRoutine");
+      const stretchDetails = document.getElementById("stretchDetails");
+
+      stretchDetails.innerHTML = "";
+      stretches[discomfort].forEach(stretch => {
+        stretchDetails.innerHTML += `
+          <div>
+            <h3>${stretch.name}</h3>
+            <img src="${stretch.image}" alt="${stretch.name}">
+          </div>
+        `;
+      });
+
+      routineDiv.style.display = "block";
+    });
+
+    document.getElementById("startTimer").addEventListener("click", () => {
+  const timer = document.getElementById("timer");
+  let timeLeft = 30;
+
+  // Clear any existing timer to prevent multiple timers
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null; // Reset to null
+  }
+
+  // Reset the timer display
+  timer.innerHTML = `Time remaining: <span id="countdown">${timeLeft}</span> seconds`;
+  timer.classList.remove("hidden"); // Make the timer visible
+
+  // Get the correct reference for countdown element
+  const countdownEl = document.getElementById("countdown");
+
+  countdownInterval = setInterval(() => {
+    timeLeft--;
+    countdownEl.textContent = timeLeft; // Update the text inside the span
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval);
+      countdownInterval = null; // Reset to null after clearing
+      timer.textContent = "Done! Great job!";
+    }
+  }, 1000); // Timer updates every second
+});
+
+
+    if ("Notification" in window) {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          const reminder = document.getElementById("reminder");
+          reminder.classList.remove("hidden");
+
+          setInterval(() => {
+            new Notification("Stretch Reminder", {
+              body: "Time to stretch! Keep your body healthy and happy.",
+            });
+          }, 86400000); // 24 hours
+        }
+      });
+    }
+  </script>
+</body>
+</html>
